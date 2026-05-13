@@ -1,0 +1,126 @@
+<div class="page">
+
+  <div class="header">
+    <div class="header-badge">AI-Powered</div>
+    <h1>Resume Analyzer</h1>
+    <p class="subtitle">Match your resume against any job description instantly</p>
+  </div>
+
+  <div class="input-section">
+
+    <div class="input-card upload-card" (click)="fileInput.click()">
+      <input type="file" accept=".pdf" (change)="onFileSelected($event)" hidden #fileInput />
+      <i class="ti ti-file-upload upload-icon"></i>
+      <p class="upload-label">{{ selectedFile ? selectedFile.name : 'Click to upload resume PDF' }}</p>
+      <span class="upload-hint">{{ selectedFile ? 'File selected ✓' : 'PDF files only' }}</span>
+    </div>
+
+    <div class="input-card jd-card">
+      <label class="jd-label">
+        <i class="ti ti-clipboard-text"></i> Job Description
+      </label>
+      <textarea
+        class="jd-textarea"
+        [(ngModel)]="job_description"
+        placeholder="Paste the full job description here...">
+      </textarea>
+    </div>
+
+  </div>
+
+  <button class="analyze-btn" (click)="uploadPdf()" [disabled]="isUploading">
+    <span *ngIf="!isUploading"><i class="ti ti-chart-bar"></i> Analyze Resume</span>
+    <span *ngIf="isUploading" class="loading-text">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      Analyzing...
+    </span>
+  </button>
+
+  <p *ngIf="uploadStatus" class="status-msg">{{ uploadStatus }}</p>
+
+  <div *ngIf="result" class="results">
+
+    <div class="section-title">Analysis Results</div>
+
+    <div class="scores-grid">
+      <div class="score-card primary">
+        <p class="score-label">Match Score</p>
+        <p class="score-value">{{ result.match_score }}<span class="score-unit">%</span></p>
+      </div>
+      <div class="score-card">
+        <p class="score-label">Keyword Match</p>
+        <p class="score-value">{{ result.keyword_match }}<span class="score-unit">%</span></p>
+      </div>
+      <div class="score-card">
+        <p class="score-label">Experience Score</p>
+        <p class="score-value">{{ result.experience_score }}<span class="score-unit">%</span></p>
+      </div>
+      <div class="score-card">
+        <p class="score-label">Education Score</p>
+        <p class="score-value">{{ result.education_score }}<span class="score-unit">%</span></p>
+      </div>
+    </div>
+
+    <div class="skills-grid">
+
+      <div class="result-card">
+        <h3 class="card-title matched-title">
+          <i class="ti ti-circle-check"></i> Matched Skills
+          <span class="count-badge matched-badge">{{ result.matched_skills.length }}</span>
+        </h3>
+        <div class="tags-wrap">
+          <span *ngFor="let skill of result.matched_skills" class="tag tag-matched">{{ skill }}</span>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <h3 class="card-title missing-title">
+          <i class="ti ti-circle-x"></i> Missing Skills
+          <span class="count-badge missing-badge">{{ result.missing_skills.length }}</span>
+        </h3>
+        <div class="tags-wrap">
+          <span *ngFor="let skill of result.missing_skills" class="tag tag-missing">{{ skill }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="result-card">
+      <h3 class="card-title"><i class="ti ti-layout-list"></i> Section Feedback</h3>
+      <div class="feedback-grid">
+        <div class="feedback-item">
+          <p class="feedback-section-label">Experience</p>
+          <p class="feedback-text">{{ result.section_feedback.experience }}</p>
+        </div>
+        <div class="feedback-item">
+          <p class="feedback-section-label">Projects</p>
+          <p class="feedback-text">{{ result.section_feedback.projects }}</p>
+        </div>
+        <div class="feedback-item">
+          <p class="feedback-section-label">Skills</p>
+          <p class="feedback-text">{{ result.section_feedback.skills }}</p>
+        </div>
+        <div class="feedback-item">
+          <p class="feedback-section-label">Education</p>
+          <p class="feedback-text">{{ result.section_feedback.education }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3 class="card-title"><i class="ti ti-bulb"></i> Suggestions</h3>
+      <ul class="suggestions-list">
+        <li *ngFor="let s of result.suggestions" class="suggestion-item">
+          <i class="ti ti-arrow-right suggestion-arrow"></i>
+          <span>{{ s }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="result-card summary-card">
+      <h3 class="card-title"><i class="ti ti-notes"></i> Summary</h3>
+      <p class="summary-text">{{ result.summary }}</p>
+    </div>
+
+  </div>
+</div>
